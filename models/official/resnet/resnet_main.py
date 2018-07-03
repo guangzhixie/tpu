@@ -492,9 +492,11 @@ def main(unused_argv):
             steps=FLAGS.num_eval_images // FLAGS.eval_batch_size)
         tf.logging.info('Eval results: %s' % eval_results)
 
-    elapsed_time = int(time.time() - start_timestamp)
+    elapsed_time = time.time() - start_timestamp
     tf.logging.info('Finished training up to step %d. Elapsed seconds %d.' %
                     (FLAGS.train_steps, elapsed_time))
+    tf.logging.info('Batch size: %d' % FLAGS.eval_batch_size)
+    tf.logging.info('Time per step: %f ms' % (elapsed_time * 1000 / FLAGS.train_steps))
 
     if FLAGS.export_dir is not None:
       # The guide to serve a exported TensorFlow model is at:
