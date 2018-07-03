@@ -442,7 +442,7 @@ def main(unused_argv):
         tf.logging.info('Eval results: %s. Elapsed seconds: %d' %
                         (eval_results, elapsed_time))
         tf.logging.info('Batch size: %d' % FLAGS.eval_batch_size)
-        tf.logging.info('Time per step: %f ms' % elapsed_time*1000/eval_steps)
+        tf.logging.info('Time per step: %f ms' % (elapsed_time*1000/eval_steps))
 
         # Terminate eval job when final checkpoint is reached
         current_step = int(os.path.basename(ckpt).split('-')[1])
