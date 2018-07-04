@@ -24,6 +24,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import time
 from absl import flags
 import tensorflow as tf
 
@@ -649,12 +650,18 @@ def main(unused_argv):
     for checkpoint in get_next_checkpoint():
       tf.logging.info('Starting to evaluate.')
       try:
+        start_timestamp = time.time()  # This time will include compilation time
         eval_results = inception_classifier.evaluate(
             input_fn=imagenet_eval.input_fn,
             steps=eval_steps,
             hooks=eval_hooks,
             checkpoint_path=checkpoint)
+        elapsed_time = time.time() - start_timestamp
         tf.logging.info('Evaluation results: %s' % eval_results)
+        tf.logging.info('Batch size: %d' % FLAGS.eval_batch_size)
+        tf.logging.info('eval_steps: %d' % eval_steps)
+        tf.logging.info('Time per step: %f ms' % (elapsed_time * 1000 / eval_steps))
+
       except tf.errors.NotFoundError:
         # skip checkpoint if it gets deleted prior to evaluation
         tf.logging.info('Checkpoint %s no longer exists ... skipping')
@@ -672,8 +679,14 @@ def main(unused_argv):
 
   else:
     tf.logging.info('Starting training ...')
+    start_timestamp = time.time()  # This time will include compilation time
     inception_classifier.train(
         input_fn=imagenet_train.input_fn, steps=FLAGS.train_steps)
+    elapsed_time = time.time() - start_timestamp
+    tf.logging.info('Finished training up to step %d. Elapsed seconds %d.' %
+                    (FLAGS.train_steps, elapsed_time))
+    tf.logging.info('Batch size: %d' % FLAGS.train_batch_size)
+    tf.logging.info('Time per step: %f ms' % (elapsed_time * 1000 / FLAGS.train_steps))
 
 
 if __name__ == '__main__':

@@ -426,7 +426,6 @@ def main(unused_argv):
 
   if FLAGS.mode == 'eval':
     eval_steps = FLAGS.num_eval_images // FLAGS.eval_batch_size
-    tf.logging.info('eval_steps: %d' % eval_steps)
 
     # Run evaluation when there's a new checkpoint
     for ckpt in evaluation.checkpoints_iterator(
@@ -442,6 +441,7 @@ def main(unused_argv):
         tf.logging.info('Eval results: %s. Elapsed seconds: %d' %
                         (eval_results, elapsed_time))
         tf.logging.info('Batch size: %d' % FLAGS.eval_batch_size)
+        tf.logging.info('eval_steps: %d' % eval_steps)
         tf.logging.info('Time per step: %f ms' % (elapsed_time*1000/eval_steps))
 
         # Terminate eval job when final checkpoint is reached
@@ -495,7 +495,7 @@ def main(unused_argv):
     elapsed_time = time.time() - start_timestamp
     tf.logging.info('Finished training up to step %d. Elapsed seconds %d.' %
                     (FLAGS.train_steps, elapsed_time))
-    tf.logging.info('Batch size: %d' % FLAGS.eval_batch_size)
+    tf.logging.info('Batch size: %d' % FLAGS.train_batch_size)
     tf.logging.info('Time per step: %f ms' % (elapsed_time * 1000 / FLAGS.train_steps))
 
     if FLAGS.export_dir is not None:
